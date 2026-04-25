@@ -3,9 +3,9 @@ using Cysharp.Threading.Tasks;
 using Game.Core.Commands;
 using Game.Core.State;
 
-namespace Game.Core.Turn
+namespace Game.Core.CommandSources
 {
-    public interface ITurnActor
+    public interface ICommandSource
     {
         UniTask<IGameCommand> GetCommandAsync(GameState state, CancellationToken token);
     }

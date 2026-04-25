@@ -6,9 +6,16 @@ namespace Game.Core.Flow
 {
     public class GameFlowController
     {
-        private GameLogic _logic;
-        private CommandRouter _commandRouter;
-        private EffectResolver _effectResolver;
+        private readonly GameLogic _logic;
+        private readonly CommandRouter _commandRouter;
+        private readonly EffectResolver _effectResolver;
+
+        public GameFlowController(GameLogic logic, CommandRouter commandRouter, EffectResolver effectResolver)
+        {
+            _logic = logic;
+            _commandRouter = commandRouter;
+            _effectResolver = effectResolver;
+        }
 
         public async UniTask RunAsync()
         {

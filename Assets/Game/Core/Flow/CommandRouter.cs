@@ -2,16 +2,16 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Game.Core.Commands;
+using Game.Core.CommandSources;
 using Game.Core.State;
-using Game.Core.Turn;
 
 namespace Game.Core.Flow
 {
     public class CommandRouter
     {
-        private readonly ITurnActor[] _actors;
+        private readonly Dictionary<PlayerId, ICommandSource> _actors;
 
-        public CommandRouter(ITurnActor[] actors)
+        public CommandRouter(Dictionary<PlayerId, ICommandSource> actors)
         {
             _actors = actors;
         }
@@ -21,7 +21,7 @@ namespace Game.Core.Flow
             using var _ = UnityEngine.Pool.ListPool<UniTask<IGameCommand>>.Get(out var tasks);
             foreach (var playerId in players)
             {
-                var actor = _actors[(int)playerId];
+                var actor = _actors[playerId];
                 var task = actor.GetCommandAsync(state, CancellationToken.None); 
                 tasks.Add(task);
             }
