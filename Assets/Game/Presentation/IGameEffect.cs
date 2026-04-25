@@ -1,6 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 
-namespace Game.Core.Flow
+namespace Game.Presentation
 {
     public interface IGameEffect
     {

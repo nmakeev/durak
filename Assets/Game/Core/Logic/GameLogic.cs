@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using Game.Core.Cards;
 using Game.Core.Commands;
+using Game.Core.Flow;
 using Game.Core.State;
 using Game.Extensions;
+using Game.Presentation;
 
 namespace Game.Core.Logic
 {
@@ -17,24 +19,11 @@ namespace Game.Core.Logic
         {
             GameState = new GameState();
 
-            var drawPile = new List<Card>();
-            var suits = (Suit[])Enum.GetValues(typeof(Suit));
-            var ranks = (Rank[])Enum.GetValues(typeof(Rank));
-            
-            foreach (var suit in suits)
-            {
-                foreach (var rank in ranks)
-                {
-                    var card = new Card(suit, rank);
-                    drawPile.Add(card);
-                }
-            }
-
+            var drawPile = GenerateNewDeck();
             drawPile.Shuffle();
 
             GameState.DiscardPile = new List<Card>();
             GameState.DrawPile = drawPile;
-            GameState.CurrentPlayerId = PlayerId.P1;
             
             GameState.Players = new List<PlayerState>();
             var firstPlayer = new PlayerState
@@ -52,11 +41,44 @@ namespace Game.Core.Logic
             DrawCards(drawPile, secondPlayer.Cards, TargetHandSize);
             GameState.Players.Add(firstPlayer);
             GameState.Players.Add(secondPlayer);
-            
-            GameState.TableSlots = new List<TableSlot>();
 
             GameState.TrumpSuit = DecideTrumpSuit();
-            GameState.CurrentPlayerId = FindStartingPlayer(GameState);
+
+            var roundState = new RoundState
+            {
+                TableSlots = new List<TableSlot>(),
+                AttackerId = FindStartingPlayer(GameState),
+            };
+            roundState.DefenderId = FindDefendingPlayer(roundState.AttackerId);
+            GameState.RoundState = roundState;
+        }
+
+        private PlayerId FindDefendingPlayer(PlayerId attackerId)
+        {
+            var index = GameState.Players.FindIndex(player => player.Id == attackerId);
+            index += 1;
+            index %= GameState.Players.Count;
+            return GameState.Players[index].Id;
+        }
+
+        public bool IsGameRunning { get; } = true;
+
+        private static List<Card> GenerateNewDeck()
+        {
+            var result = new List<Card>();
+            var suits = (Suit[])Enum.GetValues(typeof(Suit));
+            var ranks = (Rank[])Enum.GetValues(typeof(Rank));
+            
+            foreach (var suit in suits)
+            {
+                foreach (var rank in ranks)
+                {
+                    var card = new Card(suit, rank);
+                    result.Add(card);
+                }
+            }
+
+            return result;
         }
 
         private void ApplyCommands(IGameCommand command)
@@ -169,6 +191,16 @@ namespace Game.Core.Logic
                 hand.Add(drawPile[^1]);
                 drawPile.RemoveAt(drawPile.Count - 1);
             }
+        }
+
+        public bool CanApply(IGameCommand command)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGameEffect Apply(IGameCommand command)
+        {
+            return null;
         }
     }
 }

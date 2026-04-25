@@ -8,9 +8,10 @@ namespace Game.Core.State
         public List<PlayerState> Players;
         public List<Card> DrawPile;
         public List<Card> DiscardPile;
-        public PlayerId CurrentPlayerId;
-        public List<TableSlot> TableSlots;
-
         public Suit TrumpSuit;
+
+        public RoundState RoundState;
+
+        public List<PlayerId> AllowedPlayers;
     }
 }
