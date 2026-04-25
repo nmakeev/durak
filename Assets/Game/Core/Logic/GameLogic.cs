@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Game.Core.Cards;
+using Game.Core.Commands;
 using Game.Core.State;
 using Game.Extensions;
 
@@ -56,6 +57,11 @@ namespace Game.Core.Logic
 
             GameState.TrumpSuit = DecideTrumpSuit();
             GameState.CurrentPlayerId = FindStartingPlayer(GameState);
+        }
+
+        private void ApplyCommands(IGameCommand command)
+        {
+            
         }
 
         private Suit DecideTrumpSuit()
